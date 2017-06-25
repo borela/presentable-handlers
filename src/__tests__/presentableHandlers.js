@@ -10,6 +10,7 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
+import clone from 'clone'
 import presentableHandlers from '..'
 import React, { Component } from 'react'
 import { shallow } from 'enzyme'
@@ -41,7 +42,7 @@ let DecoratedPresenter = presentableHandlers(SomePresenter)
 
 describe('Decorator “presentableHandlers” applied on “SomePresenter”', () => {
   it('has the same constructor', () => {
-    const WRAPPER = shallow(<DecoratedPresenter presentable={{ ...PRESENTABLE_DATA }}/>)
+    const WRAPPER = shallow(<DecoratedPresenter presentable={clone(PRESENTABLE_DATA)}/>)
     const INSTANCE = WRAPPER.instance()
     expect(INSTANCE instanceof SomePresenter)
       .toBe(true)
@@ -50,7 +51,7 @@ describe('Decorator “presentableHandlers” applied on “SomePresenter”', (
   })
 
   it('extracts event handlers from props', () => {
-    const WRAPPER = shallow(<SomePresenter presentable={{ ...PRESENTABLE_DATA }}/>)
+    const WRAPPER = shallow(<SomePresenter presentable={clone(PRESENTABLE_DATA)}/>)
     const INSTANCE = WRAPPER.instance()
 
     let { handlers, props, state } = INSTANCE.props.presentable
