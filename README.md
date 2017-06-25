@@ -1,4 +1,4 @@
-Decorator to filter presentable‘s event handlers into their own variable.
+Decorator to filter presentable’s event handlers into their own variable.
 
 ## Installation
 
