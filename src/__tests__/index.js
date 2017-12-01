@@ -10,9 +10,12 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
+import Adapter from 'enzyme-adapter-react-16'
 import presentableHandlers from '..'
 import React, { Component } from 'react'
-import { shallow } from 'enzyme'
+import { configure, shallow } from 'enzyme'
+
+configure({ adapter: new Adapter })
 
 const ALMOST_HANDLERS = { on: 1, once: 2, one: 3 }
 const NORMAL_HANDLERS = { onSomeEventA: 4, onSomeEventB: 5, onSomeEventC: 6 }
@@ -55,10 +58,8 @@ describe('Decorator “presentableHandlers” applied on “SomePresenter”', (
   it('has the same constructor', () => {
     const WRAPPER = shallow(<DecoratedPresenter presentable={{ ...PRESENTABLE_DATA_A }}/>)
     const INSTANCE = WRAPPER.instance()
-    expect(INSTANCE instanceof SomePresenter)
-      .toBe(true)
-    expect(Object.getPrototypeOf(INSTANCE).constructor)
-      .toBe(SomePresenter)
+    expect(INSTANCE instanceof SomePresenter).toBe(true)
+    expect(Object.getPrototypeOf(INSTANCE).constructor).toBe(SomePresenter)
   })
 
   it('creates a new object for props instead of modifying the current one', () => {
@@ -82,6 +83,30 @@ describe('Decorator “presentableHandlers” applied on “SomePresenter”', (
         ...NORMAL_PROPS
       })
 
+    expect(handlers)
+      .toEqual({
+        ...SINGLE_CHAR_HANDLERS,
+        ...NORMAL_HANDLERS
+      })
+  })
+
+  it('extracts event handlers from props on updates too', () => {
+    const WRAPPER = shallow(<SomePresenter presentable={{ ...PRESENTABLE_DATA_A }}/>)
+    const INSTANCE = WRAPPER.instance()
+    const UPDATE_SPY = jest.spyOn(INSTANCE, 'componentWillUpdate')
+
+    WRAPPER.setProps({ presentable: { ...PRESENTABLE_DATA_A, z: 42 }})
+
+    let { handlers, props, state } = INSTANCE.props.presentable
+
+    expect(UPDATE_SPY).toHaveBeenCalled()
+    expect(state).toEqual(STATE)
+    expect(props)
+      .toEqual({
+        ...ALMOST_HANDLERS,
+        ...SINGLE_CHAR_PROPS,
+        ...NORMAL_PROPS
+      })
     expect(handlers)
       .toEqual({
         ...SINGLE_CHAR_HANDLERS,
