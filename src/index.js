@@ -38,7 +38,7 @@ export function presentableHandlers(targetComponent:Class<Component<*>>) {
 
   let oldComponentWillUpdate = prototype.componentWillUpdate
   prototype.componentWillUpdate = function(nextProps, nextState) {
-    filterHandlers(nextProps)
+    filterHandlers(nextProps.presentable)
     if (oldComponentWillUpdate)
       oldComponentWillUpdate(nextProps, nextState)
   }
